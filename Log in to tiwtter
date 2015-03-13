@@ -3,5 +3,5 @@ from bs4 import BeautifulSoup as BS
 
 opener = urllib2.build_opener()
 opener.addheaders.append(('Cookie', 'auth_token=4d1c2137136cb297b3e83e382b0026d9213fe731'))
-d = opener.open('https://twitter.com/shamgholi_hadi')
+d = opener.open('https://twitter.com/shamgholi_hadi')  # or https://twitter.com/adidassoccer  or s.th else.
 txt = d.read()
