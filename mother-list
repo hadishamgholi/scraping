@@ -1,0 +1,109 @@
+
+import re
+
+mother_list = []
+players_list = ["neuer", "zingerle", "reina", "starke", "dante",
+               "benatia", "sallahi", "rafinha", "boateng",
+               "bernat", "philipp", "lahm", "alaba", "badstuber",
+               "rode", "thiago", "scholl", "ribery", "martinez",
+               "xabi", "alonso", "gaudino", "gotze", "weiser",
+               "schweinsteiger", "hojbjerg", " lewandowski",
+               "robben", "pizarro", "weihrauch", "muller", "kurt",
+               "casillas", "navas", "pacheco", "pacheco", "ramos",
+               "pepe", "varane", "arbeloa", "carvajal", "coentrao",
+               "marcelo", "nacho", "khedira", "kroos", "silva",
+               "illarra", "isco", "rodriguez", "bale", "modric",
+               "ronaldo", "benzema", "jese", "chicharito",
+               "ancelotti", "hierro", "clement", "mauri", "vecchi",
+               "rakitic", "busquets", "hernandez", "iniesta",
+               "suarez", "messi", "neymar", "alcantara", "bravo",
+               "mascherano", "aregall", "santos", "ramos",
+               "carnicer", "claro", "silva", "vermaelen",
+               "mathieu", "lopez", "martinez", "salah",
+               "loftus-cheek", "christensen", "azpilicueta",
+               "terry", "cahill", "cuadrado", "willian", "matic",
+               "costa", "remy", "schurrle", "courtois", "mikel",
+               "drogba", "hazard", "oscar", "gea", "rafael",
+               "shaw", "jones", "rojo", "evans", "di maria",
+               "mata", "falcao", "rooney", "januzaj", "smalling",
+               "lindegaard", "hernandez", "carrick", "blind",
+               "van persie", "herrera", "powell",
+               "paulinho", "forlan", "marek hamsik", "sneijder",
+               "kagawa", "arfa", "dembele", "mkhitaryan",
+               "pastore", "bonucci", "asamoah", "mayuka",
+               "srna", "hulk", "yanga-m'biwa", "wanyama",
+               "moutinho", "lavezzi", "eriksen", "cazorla",
+               "hernanes", "lewandowski", "aubameyang",
+               "valbuena", "hart", "huntelaar", "fellaini",
+               "vidal", "eto'o", "shaarawy", "chiellini",
+               "hummels", "rossi", "zanetti", "fernandinho",
+               "ashley cole", "reus", "buffon", "ozil", "silva",
+               "cavani", "pirlo", "zlatan", "ibrahimovic", "tevez",
+               "higuain", "toni", "kane", "austin", "sanchez",
+               "bacca", "garcia"]
+
+expression = ["pitch","offside"]
+
+
+coach = ["ancelotti","guardiola","enrique","emery","simeone","mourinho","hecking","wenger","marcelino","jesus"]
+
+
+clubs = ['bayern munchen', 'chelsea', 'manchester city', 'arsenal', 'manchester united',
+         'liverpool', 'southampton', 'tottenham hotspur', 'stoke city', 'swansea city',
+         'west ham united', 'newcastle united', 'crystal palace', 'west bromwich albion',
+         'everton', 'hull city', 'aston villa', 'sunderland', 'burnley', 'queens park rangers',
+         'leicester city', 'fc barcelona', 'real madrid cf', 'valencia cf', 'atletico madrid',
+         'sevilla fc', 'villarreal cf', 'malaga cf', 'athletic club', 'rcd espanyol', 'celta de vigo',
+         'rayo vallecano', 'real sociedad', 'getafe cf', 'eibar', 'elche cf', 'ud almeria',
+         'deportivo la coruna', 'levante ud', 'granada cf', 'granada cf', 'cordoba cf', 'juventus',
+         'as roma', 'lazio', 'napoli', 'fiorentina', 'sampdoria', 'genoa', 'internazionale', 'torino',
+         'ac milan', 'palermo', 'udinese', 'sassuolo', 'sassuolo', 'verona', 'empoli', 'chievo',
+         'atalanta', 'cagliari', 'cesena', 'parma', 'paris saint germain', 'psg', 'wolfsburg',
+         'benfica', 'porto', 'monaco', 'shakhtar donetsk', 'bayer leverkusen', 'lyon', 'ajax',
+         'dortmund', 'petersburg', 'sparta prague', 'olympiakos', 'river plate', 'viktoria plzen',
+         'monchengladbach', 'dynamo kyiv', 'psv eindhoven', 'cruzeiro', 'sporting', 'corinthians',
+         'augsburg', 'levadia tallinn', 'basel', 'club brugge', 'fenerbahce', 'olympique marseille']
+
+
+
+
+
+
+stadium = ["celtic", "centenario", "Anfield", "Azteca", "giuseppe meazza", "signal iduna", "allianz arena",
+           "maracana", "old trafford", "santiago bernabeu", "camp nou", "wembley"]
+
+mother_list.extend(players_list)
+
+mother_list.extend(stadium)
+
+mother_list.extend(clubs)
+
+mother_list.extend(coach)
+
+mother_list.extend(expression)
+
+
+
+def is_about_football(tweet):
+    
+    global mother_list
+    text = tweet.lower()
+
+    text = text.split(" ")
+    print text
+
+    for word in mother_list:
+        for w in text:
+            try:
+                pattern = "^"+ w + "$"
+                re.compile(pattern)
+                if re.match(pattern,word):
+                    print word
+                    return True
+            except:
+                pass
+    return False
+
+if __name__ == '__main__':
+    print is_about_football('Why is the Nonprofit Sector Getting Younger? Young, Driven, and Passionate NGO Employees Share http://bit.ly/1tG')
+    #print len(mother_list)
