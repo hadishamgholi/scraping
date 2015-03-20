@@ -1,0 +1,154 @@
+# In the name of GOD!
+# Threading...
+
+import time
+import pickle
+import threading
+from scraping import *
+from text_mining import *
+from drawing_graph import *
+
+while True:
+
+    mode_select = raw_input('Enter "N" To Start a New Scrapping Or "R" To Resume Previous One: ')
+
+    if mode_select.lower() == 'n':
+
+        users = [raw_input('Enter a User Name: ')]
+        checked_users = []
+        football_lovers = {}
+        relations = []
+        tweet_checker_counter = 0
+        user_collector_counter = 0
+        break
+
+    elif mode_select.lower() == 'r':
+
+        try:
+            users, checked_users, relations, football_lovers, tweet_checker_counter, user_collector_counter = pickle.load(open('data.pck', mode='rb'))
+            break
+        except:
+            print 'No Pickled Data Found!'
+            users = [raw_input('Enter a User Name: ')]
+            checked_users = []
+            football_lovers = {}
+            relations = []
+            tweet_checker_counter = 0
+            user_collector_counter = 0
+            break
+    else:
+        print 'Invalid Input! Try Again :)'
+
+lock = threading.Lock()
+
+def controller():
+
+    global users, checked_users, relations, football_lovers, lock, tweet_checker_counter, user_collector_counter
+
+    while True:
+        lock.acquire()
+
+        threading.Thread(target=tweet_checker).start()
+        threading.Thread(target=user_collector).start()
+
+        while True:
+            user_input = raw_input()
+
+            if user_input.lower() == 's':
+                print 'STOPPED!'
+                break
+
+            elif user_input.lower() == 'q':
+                print 'QUIT!\n'
+                lock.release()
+                return None
+
+        lock.release()
+
+        draw_graph(checked_users, relations, football_lovers)
+        print 'Graph Is Drawn!'
+
+        data = (users, checked_users, relations, football_lovers, tweet_checker_counter, user_collector_counter)
+
+        pickle.dump(data, open('data.pck', mode='wb'))
+        print 'Data Pickled!'
+
+        while True:
+            user_input = raw_input('Enter "S" to Start! ')
+
+            if user_input.lower() == 's':
+                print 'STARTED!'
+                users, checked_users, relations, football_lovers, tweet_checker_counter, user_collector_counter = pickle.load(open('data.pck', mode='rb'))
+                break
+
+            elif user_input.lower() == 'q':
+                print 'QUIT!'
+                return None
+
+
+def tweet_checker():
+
+    global users, football_lovers, tweet_checker_counter
+
+    while lock.locked():
+
+        try:
+            user = users[tweet_checker_counter]
+        except IndexError:
+            time.sleep(1)
+            user = users[tweet_checker_counter]
+        finally:
+            football_lovers[users[tweet_checker_counter]] = False
+
+        for tweet in get_tweets(5, user, '1cfa3d1a224665c893a28310802b64ce4c6a4d83'):
+
+            if not lock.locked():
+                break
+
+            if is_about_football(tweet):
+                football_lovers[user] = True
+                # print tweet         ###
+                break
+        checked_users.append(user)
+        print checked_users
+        tweet_checker_counter += 1
+
+    print 'Tweet Checker Stopped!'
+
+
+def user_collector():
+
+    global users, relations, user_collector_counter
+
+    while lock.locked():
+
+        counter = 4
+        for user in get_followers(users[user_collector_counter], '1cfa3d1a224665c893a28310802b64ce4c6a4d83'):
+            if not lock.locked() or counter == 0 or user is None:
+                break
+            if user not in users:
+                users.append(user)
+                relations.append((len(users)-1, user_collector_counter))
+            counter -= 1
+
+        counter = 4
+        for user in get_following(users[user_collector_counter], '1cfa3d1a224665c893a28310802b64ce4c6a4d83'):
+            if not lock.locked() or counter == 0 or user is None:
+                break
+            if user not in users:
+                users.append(user)
+                relations.append((user_collector_counter, len(users)-1))
+            counter -= 1
+
+        user_collector_counter += 1
+
+    print 'User Collector stopped!'
+
+
+controller_t = threading.Thread(target=controller)
+
+controller_t.start()
+
+
+
+
